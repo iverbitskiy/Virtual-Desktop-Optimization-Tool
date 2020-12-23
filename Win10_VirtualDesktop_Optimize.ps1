@@ -1,4 +1,4 @@
-﻿<#####################################################################################################################################
+<#####################################################################################################################################
 
     This Sample Code is provided for the purpose of illustration only and is not intended to be used in a production environment.  
     THIS SAMPLE CODE AND ANY RELATED INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, 
@@ -356,7 +356,7 @@ PROCESS {
     # 5/18/20: Removing Disk Cleanup and moving some of those tasks to the following manual cleanup
     If ($DiskCleanup) {
         Write-Verbose "Removing .tmp, .etl, .evtx, thumbcache*.db, *.log files not in use"
-        Get-ChildItem -Path c:\ -Include *.tmp, *.dmp, *.etl, *.evtx, thumbcache*.db, *.log -File -Recurse -Force -ErrorAction SilentlyContinue | Remove-Item -ErrorAction SilentlyContinue
+        Get-ChildItem -Path c:\ -Include *.tmp, *.dmp, *.etl, *.evtx, thumbcache*.db, *.log -File -Recurse -Force -ErrorAction SilentlyContinue | Where-Object {$_.FullName -notlike "*\NMWLogs\*" -and $_.FullName -notlike "*\WindowsAzure\*" } | Remove-Item -ErrorAction SilentlyContinue
 
         # Delete "RetailDemo" content (if it exits)
         Write-Verbose "Removing Retail Demo content (if it exists)"
@@ -364,7 +364,7 @@ PROCESS {
 
         # Delete not in-use anything in the C:\Windows\Temp folder
         Write-Verbose "Removing all files not in use in $env:windir\TEMP"
-        Remove-Item -Path $env:windir\Temp\* -Recurse -Force -ErrorAction SilentlyContinue
+        Get-ChildItem -Path $env:windir\Temp -Exclude NMWLogs -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
         # Clear out Windows Error Reporting (WER) report archive folders
         Write-Verbose "Cleaning up WER report archive"
@@ -374,7 +374,7 @@ PROCESS {
 
         # Delete not in-use anything in your %temp% folder
         Write-Verbose "Removing files not in use in $env:TEMP directory"
-        Remove-Item -Path $env:TEMP\* -Recurse -Force -ErrorAction SilentlyContinue
+        Get-ChildItem -Path $env:TEMP\* -Exclude NMWLogs -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
         # Clear out ALL visible Recycle Bins
         Write-Verbose "Clearing out ALL Recycle Bins"
